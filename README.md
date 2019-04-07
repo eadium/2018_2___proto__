@@ -1,6 +1,6 @@
 # Quizzy backend
 
-Small API server to authenticate and process user data for Quizzy frontend.
+An API server to authenticate and process user data for Quizzy frontend.
 
 ## Repos
 
@@ -9,33 +9,36 @@ Small API server to authenticate and process user data for Quizzy frontend.
 
 ## Running on your machine
 
-Firstly you need to get Go 1.11 or higher. PostgreSQL is preferred DBMS.
+### Requirements
+* Go 1.11 or higher
+* PostgreSQL 10 or higher (preferable DB)
 
-This app is using microservices architecture (via GRPC).
+This server is designed using microservices architecture (GRPC).
 
-
-### Firstly, you have to create config files:
+### Step 1. Creating config files
+In the project dir:
 
 ```bash
 touch service_main/data/cfg.json
 touch service_auth/data/cfg.json
 ```
 
-Example of auth service config file:
+Example of auth service configuration file:
 
 ```json
 {
     "dbconnector": "postgres",
-    "connectionstring": "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable",
+    "connectionstring": "host=localhost port=5432 user=postgres password=passwd dbname=postgres sslmode=disable",
     "port": ":5050"
 }
 ```
 
-Example of main service config file:
+Example of main service configuration file:
+
 ```json
 {
     "dbconnector": "postgres",
-    "connectionstring": "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable",
+    "connectionstring": "host=localhost port=5432 user=postgres password=passwd dbname=postgres sslmode=disable",
     "corsallowedhost": ["http://localhost:3000"],
     "https": false,
     "port": ":8000",
@@ -44,30 +47,24 @@ Example of main service config file:
     "pprofenabled": false
 }
 ```
-### Then, you should create a database with determined structure.
-DB architecture could be found in the [schema](service_main/data/db-init.psql) file.
 
-For example you could use such command (where `quizzy` is the DB name):
+### Step 2. Database setup
+The scheme is available in this [file](service_main/data/db-init.psql).
 
-```bash
-sudo -u postgres psql quizzy < service_main/data/db-init.psql
-```
-
-### To build binaries proceed the following instructions:
+### Step 3. Build & run
+To build services:
 
 ```bash
 go get
 go build service_auth/*.go
 go build service_main/*.go
-
 ```
 
-Because of the microservices architecture we need to run two binaries.
-For this purpose we can use `screen`
+Run each microservice in a seperate session. To do this, you can use `screen` utility:
 
 ```bash
 cd service_auth && screen -dmS auth-quizzy ./service_auth && cd ..
 cd service_main && screen -dmS main-quizzy ./service_main && cd ..
 ```
 
-That's all! API is now available at port 8000 (you can change it in the config).
+Public API is now available at port 8000 (you can change this value in the configuration file).
