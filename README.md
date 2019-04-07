@@ -1,5 +1,7 @@
 # Quizzy backend
 
+Small API server to authenticate and process user data for Quizzy frontend.
+
 ## Repos
 
 * [Frontend](https://github.com/eadium/quizzy-frontend)
